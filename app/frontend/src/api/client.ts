@@ -52,3 +52,11 @@ export async function saveEdits(jobId: string, edits: Array<Record<string, unkno
   }
   return response.json();
 }
+
+export async function pickFile(): Promise<{ path: string }> {
+  const response = await fetch(`${API_BASE}/api/utils/pick-file`);
+  if (!response.ok) {
+    throw new Error("Failed to pick file");
+  }
+  return response.json();
+}

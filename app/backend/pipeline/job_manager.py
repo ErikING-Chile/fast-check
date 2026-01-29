@@ -40,6 +40,11 @@ class JobManager:
         pack_name: Optional[str],
         verify: bool,
     ) -> str:
+        if not Path(video_path).exists():
+            raise ValueError(f"Video file not found: {video_path}")
+        if Path(video_path).stat().st_size == 0:
+            raise ValueError(f"Video file is empty (0 bytes): {video_path}")
+
         job_id = str(uuid.uuid4())
         status = JobStatus(job_id=job_id)
         self._jobs[job_id] = status

@@ -18,14 +18,17 @@ router = APIRouter(prefix="/api/jobs", tags=["jobs"])
 
 @router.post("")
 async def create_job(body: dict) -> dict:
-    job_id = JOB_MANAGER.submit(
-        video_path=body["video_path"],
-        language=body.get("language", "auto"),
-        num_speakers=body.get("num_speakers"),
-        pack_name=body.get("pack_name"),
-        verify=bool(body.get("verify", False)),
-    )
-    return {"job_id": job_id}
+    try:
+        job_id = JOB_MANAGER.submit(
+            video_path=body["video_path"],
+            language=body.get("language", "auto"),
+            num_speakers=body.get("num_speakers"),
+            pack_name=body.get("pack_name"),
+            verify=bool(body.get("verify", False)),
+        )
+        return {"job_id": job_id}
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
 
 
 @router.get("/{job_id}")

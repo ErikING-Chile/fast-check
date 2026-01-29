@@ -1,100 +1,45 @@
+@import "tailwindcss";
+
+@theme {
+  --animate-blob: blob 7s infinite;
+
+  @keyframes blob {
+    0% {
+      transform: translate(0px, 0px) scale(1);
+    }
+
+    33% {
+      transform: translate(30px, -50px) scale(1.1);
+    }
+
+    66% {
+      transform: translate(-20px, 20px) scale(0.9);
+    }
+
+    100% {
+      transform: translate(0px, 0px) scale(1);
+    }
+  }
+}
+
+@layer utilities {
+  .animation-delay-2000 {
+    animation-delay: 2s;
+  }
+
+  .animation-delay-4000 {
+    animation-delay: 4s;
+  }
+}
+
 :root {
   font-family: "Inter", system-ui, sans-serif;
-  color: #1e1e1e;
-  background: #f5f5f7;
+  color-scheme: dark;
 }
 
 body {
   margin: 0;
-}
-
-.app {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 32px;
-}
-
-header {
-  margin-bottom: 24px;
-}
-
-.card {
-  background: #fff;
-  padding: 24px;
-  border-radius: 12px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-  margin-bottom: 24px;
-}
-
-.form-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 16px;
-}
-
-input,
-select,
-button {
-  padding: 10px;
-  border-radius: 8px;
-  border: 1px solid #d0d0d5;
-  width: 100%;
-}
-
-button {
-  background: #1b4dff;
+  background-color: #020617;
+  /* slate-950 */
   color: #fff;
-  font-weight: 600;
-  cursor: pointer;
-}
-
-.progress {
-  background: #eee;
-  border-radius: 8px;
-  height: 10px;
-  overflow: hidden;
-}
-
-.progress .bar {
-  height: 100%;
-  background: #1b4dff;
-}
-
-.grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-  gap: 24px;
-}
-
-.transcript {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  margin-top: 12px;
-}
-
-.segment {
-  border: 1px solid #eee;
-  border-radius: 10px;
-  padding: 12px;
-}
-
-.segment-meta {
-  display: flex;
-  justify-content: space-between;
-  font-size: 12px;
-  color: #666;
-}
-
-.claim-card {
-  border-left: 4px solid #1b4dff;
-  padding: 10px 12px;
-  background: #f7f8ff;
-  margin-bottom: 12px;
-}
-
-.speaker-row {
-  display: flex;
-  flex-direction: column;
-  margin-bottom: 12px;
 }
