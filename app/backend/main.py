@@ -1,6 +1,25 @@
 from __future__ import annotations
 
 from fastapi import FastAPI
+from dotenv import load_dotenv
+
+load_dotenv()
+load_dotenv()
+
+# Numpy 2.x backward compatibility hack
+import numpy as np
+try:
+    if not hasattr(np, "NaN"):
+        np.NaN = np.nan
+    if not hasattr(np, "float_"):
+        np.float_ = np.float64
+    if not hasattr(np, "Infinity"):
+        np.Infinity = np.inf
+    if not hasattr(np, "complex_"):
+        np.complex_ = np.complex128
+except Exception:
+    pass
+
 from fastapi.middleware.cors import CORSMiddleware
 
 from api.routes_jobs import router as jobs_router

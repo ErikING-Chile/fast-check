@@ -3,3 +3,5 @@ node_modules/
 **/app/data/
 *.pyc
 __pycache__/
+
+.env
