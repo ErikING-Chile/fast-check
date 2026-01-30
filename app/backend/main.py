@@ -4,7 +4,6 @@ from fastapi import FastAPI
 from dotenv import load_dotenv
 
 load_dotenv()
-load_dotenv()
 
 # Numpy 2.x backward compatibility hack
 import numpy as np
@@ -19,6 +18,15 @@ try:
         np.complex_ = np.complex128
 except Exception:
     pass
+
+# Auto-patch dependencies for compatibility
+try:
+    from patch_dependencies import patch_dependencies
+    patch_dependencies()
+except ImportError:
+    pass
+except Exception as e:
+    print(f"Warning: Failed to patch dependencies: {e}")
 
 from fastapi.middleware.cors import CORSMiddleware
 
