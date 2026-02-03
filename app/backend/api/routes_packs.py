@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from datetime import datetime
+from datetime import datetime, timezone
 from pathlib import Path
 from urllib.parse import urlparse
 
@@ -30,7 +30,7 @@ async def snapshot_pack(body: dict) -> dict:
         raise HTTPException(status_code=403, detail="Domain not allowlisted")
     response = requests.get(url, timeout=20)
     response.raise_for_status()
-    timestamp = datetime.utcnow().strftime("%Y%m%d")
+    timestamp = datetime.now(timezone.utc).strftime("%Y%m%d")
     snapshot_dir = SETTINGS.data_dir / "snapshots" / parsed.hostname / timestamp
     snapshot_dir.mkdir(parents=True, exist_ok=True)
     filename = Path(parsed.path).name or "index.html"

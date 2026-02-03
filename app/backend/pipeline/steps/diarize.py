@@ -12,6 +12,26 @@ from core.models import Segment
 from utils.ffmpeg import get_audio_duration
 
 
+def _load_audio_as_tensor(audio_path: Path):
+    """Carga audio usando soundfile y lo convierte a tensor para pyannote."""
+    import torch
+    import soundfile as sf
+    
+    # Leer audio con soundfile (evita torchcodec)
+    waveform, sample_rate = sf.read(str(audio_path), dtype='float32')
+    
+    # Convertir a tensor de PyTorch
+    # soundfile devuelve (samples,) para mono o (samples, channels) para stereo
+    if waveform.ndim == 1:
+        waveform = waveform.reshape(1, -1)  # (1, samples) para mono
+    else:
+        waveform = waveform.T  # (channels, samples)
+    
+    waveform_tensor = torch.from_numpy(waveform)
+    
+    return {"waveform": waveform_tensor, "sample_rate": sample_rate}
+
+
 def diarize_audio(audio_path: Path, num_speakers: Optional[int]) -> List[Segment]:
     duration = get_audio_duration(audio_path)
     if importlib.util.find_spec("pyannote.audio") is None:
@@ -56,12 +76,19 @@ def diarize_audio(audio_path: Path, num_speakers: Optional[int]) -> List[Segment
             "Check that your HF_TOKEN in .env is correct."
         )
         raise RuntimeError(error_msg)
-    diarization = pipeline(str(audio_path))
+    
+    # Cargar audio usando soundfile (evita problemas con torchcodec)
+    audio_input = _load_audio_as_tensor(audio_path)
+    
+    # Ejecutar diarización con número de speakers opcional
+    if num_speakers is not None and num_speakers > 0:
+        diarization = pipeline(audio_input, num_speakers=num_speakers)
+    else:
+        diarization = pipeline(audio_input)
+    
     segments: List[Segment] = []
     for turn, _, speaker in diarization.itertracks(yield_label=True):
         segments.append(
             Segment(start=float(turn.start), end=float(turn.end), speaker=speaker, text="")
         )
-    if num_speakers:
-        segments = segments[:num_speakers]
     return segments

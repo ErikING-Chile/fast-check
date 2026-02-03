@@ -8,5 +8,7 @@ pyannote.audio>=3.1.1
 faster-whisper>=0.10.0
 torch
 torchaudio
+soundfile>=0.12.1
+speechbrain>=0.5.14
 
 python-dotenv

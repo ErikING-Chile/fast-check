@@ -67,6 +67,8 @@ def apply_edits(transcript: Transcript, edits: List[dict]) -> Transcript:
 
 
 def _merge_buffer(buffer: List[Segment]) -> Segment:
+    if not buffer:
+        raise ValueError("Cannot merge empty buffer")
     speaker = buffer[0].speaker
     text = " ".join(segment.text for segment in buffer)
     return Segment(

@@ -9,6 +9,7 @@ from fastapi import APIRouter, HTTPException
 from fastapi.responses import FileResponse, JSONResponse
 
 from core.models import JobResult
+from core.settings import SETTINGS
 from pipeline.job_manager import JOB_MANAGER
 from pipeline.steps.edits import apply_edits
 from utils.time import seconds_to_timestamp, seconds_to_vtt
@@ -45,12 +46,12 @@ async def get_job(job_id: str) -> dict:
 
 
 @router.get("/{job_id}/result")
-async def get_result(job_id: str, apply_edits_flag: bool = True) -> JSONResponse:
+async def get_result(job_id: str, apply_edits: bool = True) -> JSONResponse:
     result = JOB_MANAGER.get_result(job_id)
     if not result:
         raise HTTPException(status_code=404, detail="Result not found")
-    if apply_edits_flag:
-        edits_path = Path("app/data/jobs") / job_id / "edits.json"
+    if apply_edits:
+        edits_path = SETTINGS.data_dir / "jobs" / job_id / "edits.json"
         if edits_path.exists():
             edits = json.loads(edits_path.read_text())
             result = _apply_edits(result, edits)
@@ -59,7 +60,7 @@ async def get_result(job_id: str, apply_edits_flag: bool = True) -> JSONResponse
 
 @router.patch("/{job_id}/edits")
 async def update_edits(job_id: str, body: dict) -> dict:
-    edits_path = Path("app/data/jobs") / job_id / "edits.json"
+    edits_path = SETTINGS.data_dir / "jobs" / job_id / "edits.json"
     edits_path.parent.mkdir(parents=True, exist_ok=True)
     edits_path.write_text(json.dumps(body.get("edits", []), indent=2))
     return {"status": "saved"}
@@ -70,7 +71,7 @@ async def export_result(job_id: str, format: str) -> FileResponse:
     result = JOB_MANAGER.get_result(job_id)
     if not result:
         raise HTTPException(status_code=404, detail="Result not found")
-    export_dir = Path("app/data/jobs") / job_id / "exports"
+    export_dir = SETTINGS.data_dir / "jobs" / job_id / "exports"
     export_dir.mkdir(parents=True, exist_ok=True)
     if format == "json":
         path = export_dir / "result.json"

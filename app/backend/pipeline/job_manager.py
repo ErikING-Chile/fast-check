@@ -80,7 +80,8 @@ class JobManager:
             status.progress = 0.1
             status.logs.append("Starting pipeline")
             try:
-                result = run_pipeline(**job)
+                # Ejecutar pipeline en thread separado para no bloquear el event loop
+                result = await asyncio.to_thread(run_pipeline, **job)
                 status.progress = 0.9
                 status.current_step = "saving"
                 result_path = SETTINGS.data_dir / "jobs" / job_id / "result.json"
